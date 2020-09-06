@@ -1,0 +1,5 @@
+﻿{
+  "Id": "VoidMod",
+  "Version": "1.0.0",
+  "EntryMethod": "VoidMod.MyPatcher.DoPatching"
+}

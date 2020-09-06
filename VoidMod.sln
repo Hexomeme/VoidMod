@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidMod", "TestMod\VoidMod.csproj", "{214C704F-5B20-45CD-924E-C4A5FC792BD6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{214C704F-5B20-45CD-924E-C4A5FC792BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{214C704F-5B20-45CD-924E-C4A5FC792BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{214C704F-5B20-45CD-924E-C4A5FC792BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{214C704F-5B20-45CD-924E-C4A5FC792BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2EEA526-961E-43E8-9359-5DD00DBE9CA9}
+	EndGlobalSection
+EndGlobal
