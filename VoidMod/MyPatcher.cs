@@ -58,14 +58,14 @@ namespace VoidMod
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 player.GetComponent<scriptOWPlayer>().SetEncounterData(
-                    __instance.canEncounter,
-                    monsterlist.ToArray(),
-                    __instance.levelMin,
-                    __instance.levelMax,
-                    __instance.encounterDelay,
-                    __instance.uMonID,
-                    __instance.uMonVar,
-                    __instance.uMonPal);
+                    __instance.canEncounter,   // Boolean to determine if monsters can spawn
+                    monsterlist.ToArray(),     // List of monsters that are supposed to spawn
+                    __instance.levelMin,       // Minimum level of wild monsters
+                    __instance.levelMax,       // Maximum level of wild monsters
+                    __instance.encounterDelay, // Not sure. Either the delay between the monster spawning and beginning to act or the timer inbetween spawns
+                    __instance.uMonID,         // ID of the wild crossbreed
+                    __instance.uMonVar,        // Crossbreed Variant
+                    __instance.uMonPal);       // Color Palette of the variant 
             }
             catch (Exception e)
             {
