@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Net.Security;
 using System.Reflection;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 
+
 namespace VoidMod
 {
     class MyPatcher
@@ -17,8 +19,12 @@ namespace VoidMod
         {
             
             var harmony = new Harmony("com.example.patch");
-           // Harmony.DEBUG = true;
+            // Harmony.DEBUG = true;
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            //harmony.Patch(
+            //    typeof(scriptEncounterArea).GetMethod("FillEncounterData"),
+            //    new HarmonyMethod(typeof(PatchEncounterAreas).GetMethod("Postfix")));
         }
     }
 
@@ -31,8 +37,7 @@ namespace VoidMod
             if (Harmony.DEBUG)
             {
                 FileLog.Log("Titel: " + __instance.title);
-            }
-            
+            }            
         }
     }
 
@@ -55,6 +60,18 @@ namespace VoidMod
                 {
                     monsterlist.Add(__instance.monsters[i]);
                 }
+                GameObject global = GameObject.FindGameObjectWithTag("Global");
+
+                if (Harmony.DEBUG)
+                {
+                    FileLog.Log("Anzahl Sprites: " + global.GetComponent<scriptMonsters>().dSprites.Length);
+                    foreach (Sprite ds in global.GetComponent<scriptMonsters>().dSprites)
+                    {
+                        FileLog.Log("Sprite Name: " + ds.name);
+                    }
+                }
+
+                
 
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 player.GetComponent<scriptOWPlayer>().SetEncounterData(
@@ -76,6 +93,91 @@ namespace VoidMod
                 FileLog.Log(e.InnerException.StackTrace);
 
             }
+        }
+    }
+    [HarmonyPatch(typeof(scriptMasterLoader))]
+    [HarmonyPatch("Update")]
+    class PatchMasterLoader
+    {
+
+        
+        static void Postfix (scriptMasterLoader __instance, ref string ___assetPath, ref int ___phase)
+        {
+            try
+            {              
+                if (___phase == 1)
+                {
+                    FileLog.LogBuffered("Current Phase: " + ___phase.ToString());
+                    FileLog.LogBuffered("assetpath: " + ___assetPath);
+                    String modpath = ___assetPath;                    
+                    FileLog.LogBuffered("modpath: " + modpath);
+                    modpath += "Mods/";
+                    FileLog.LogBuffered("modpath2: " + modpath);
+
+
+                    if(Harmony.DEBUG)
+                    {
+                        FileLog.FlushBuffer();
+                    }
+                    FileLog.Reset();
+                    AssetLoader loader =  AssetLoader.Instance;
+                    loader.loadAssets(modpath);
+                    FileLog.Log("Assets loaded");
+                } else if (___phase == 13)
+                { 
+                    GameObject global = GameObject.FindGameObjectWithTag("Global");
+
+                    FileLog.Log("Number of monster sprites: " + global.GetComponent<scriptMonsters>().dSprites.Length);
+                    FileLog.Log("Number of follower sprites: " + global.GetComponent<scriptMonsters>().followMon.Length);
+                    FileLog.Log("Number of egg sprites: " + global.GetComponent<scriptMonsters>().dEggSprites.Length);
+                }
+                
+            }
+            catch (Exception e)
+            {
+                FileLog.Log(e.Message);
+                FileLog.Log(e.StackTrace);
+                FileLog.Log(e.InnerException.Message);
+                FileLog.Log(e.InnerException.StackTrace);
+                }
+            
+        }
+    }
+
+    [HarmonyPatch(typeof(scriptMonsters))]
+    [HarmonyPatch("LoadBinaryData")]
+    class PatchBinaryDataLoad
+    {
+        static bool Prefix(scriptMonsters __instance)
+        {
+            try
+            {
+                AssetLoader loader = AssetLoader.Instance;
+                List<Sprite> spriteList = new List<Sprite>();
+                spriteList.AddRange(loader.getMonSprites());
+                spriteList.AddRange(Resources.LoadAll<Sprite>("monsters"));
+                __instance.dSprites = spriteList.ToArray();
+                spriteList.Clear();
+                spriteList.AddRange(loader.getFollowSprites());
+                spriteList.AddRange(Resources.LoadAll<Sprite>("followMonsters"));
+                __instance.followMon = spriteList.ToArray();
+                spriteList.Clear();
+                spriteList.AddRange(loader.getEggSprites());
+                spriteList.AddRange(Resources.LoadAll<Sprite>("eggs"));
+                __instance.dEggSprites = spriteList.ToArray();
+                return false;
+            }
+            catch (Exception e)
+            {
+                FileLog.Log("Modding Monsters Failed!: ");
+                FileLog.Log(e.Message);
+                FileLog.Log(e.StackTrace);
+                FileLog.Log(e.InnerException.Message);
+                FileLog.Log(e.InnerException.StackTrace);
+                return true;
+            }
+
+
         }
     }
 }
